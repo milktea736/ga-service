@@ -1,0 +1,102 @@
+basePath: /
+definitions:
+  auth.HTTPError:
+    properties:
+      code:
+        example: 400
+        type: integer
+      message:
+        example: status bad request
+        type: string
+    type: object
+  auth.jwtRequest:
+    properties:
+      sa_token:
+        example: example_sa_token
+        type: string
+      user_token:
+        example: example_user_token
+        type: string
+    type: object
+  auth.jwtResponse:
+    properties:
+      expires_in:
+        example: 3600
+        type: integer
+      token:
+        example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+        type: string
+    type: object
+  auth.refreshRequest:
+    properties:
+      token:
+        example: example_jwt_token
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: This is a sample server
+  title: Your Project API
+  version: "1.0"
+paths:
+  /auth/jwt:
+    post:
+      consumes:
+      - application/json
+      description: Issue a JWT token based on provided user_token and sa_token
+      parameters:
+      - description: Issued a GA token
+        in: body
+        name: jwtRequest
+        schema:
+          $ref: '#/definitions/auth.jwtRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return an GA token
+          schema:
+            $ref: '#/definitions/auth.jwtResponse'
+        "400":
+          description: Invalid input or sa_token is required
+          schema:
+            $ref: '#/definitions/auth.HTTPError'
+        "500":
+          description: Internal server error
+          schema:
+            $ref: '#/definitions/auth.HTTPError'
+      summary: Issue a JWT token
+      tags:
+      - auth
+  /auth/jwt/refresh:
+    post:
+      consumes:
+      - application/json
+      description: Refresh a JWT token based on provided token
+      parameters:
+      - description: Refresh an issued token
+        in: body
+        name: refreshRequest
+        required: true
+        schema:
+          $ref: '#/definitions/auth.refreshRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Return an GA token
+          schema:
+            $ref: '#/definitions/auth.jwtResponse'
+        "400":
+          description: Invalid input
+          schema:
+            $ref: '#/definitions/auth.HTTPError'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/auth.HTTPError'
+      summary: Refresh a JWT token
+      tags:
+      - auth
+swagger: "2.0"
